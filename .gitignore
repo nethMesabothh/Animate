@@ -1,0 +1,13 @@
+# Project place file
+/Animate.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+sourcemap.json
+
+# Wally packages (restored via `wally install`; wally.lock IS committed)
+/Packages
+/ServerPackages
+/DevPackages
