@@ -30,7 +30,7 @@ local function onPlatformTouched(platform: BasePart, hit: BasePart)
 	end
 
 	currentStyle = styleName
-	StyleChanged:Fire(styleName, style.WalkAnimationId, style.RunAnimationId)
+	StyleChanged:Fire(styleName, style)
 end
 
 local function bindPlatform(platform: Instance)
