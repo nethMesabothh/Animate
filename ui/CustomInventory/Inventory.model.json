@@ -1,0 +1,91 @@
+{
+  "ClassName": "ImageLabel",
+  "Properties": {
+    "Name": "Inventory",
+    "AnchorPoint": [0.5, 1],
+    "BackgroundColor3": [0, 0, 0],
+    "BackgroundTransparency": 0.5,
+    "BorderSizePixel": 0,
+    "Position": { "UDim2": [[0.5, 0], [0.925, -20]] },
+    "Size": { "UDim2": [[0.521766543, 0], [0.399412662, 0]] },
+    "Visible": false
+  },
+  "Children": [
+    {
+      "Name": "Frame",
+      "ClassName": "ScrollingFrame",
+      "Properties": {
+        "Active": true,
+        "AnchorPoint": [0.5, 0.5],
+        "AutomaticCanvasSize": "Y",
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "CanvasSize": { "UDim2": [[0, 0], [0, 0]] },
+        "ClipsDescendants": true,
+        "Position": { "UDim2": [[0.501055181, 0], [0.54903686, 0]] },
+        "ScrollBarThickness": 5,
+        "ScrollBarImageTransparency": 0.4,
+        "ScrollingDirection": "Y",
+        "Size": { "UDim2": [[0.98, 0], [0.86192596, 0]] },
+        "ZIndex": 1
+      },
+      "Children": [
+        {
+          "Name": "Grid",
+          "ClassName": "UIGridLayout",
+          "Properties": {
+            "CellPadding": { "UDim2": [[0.01, 5], [0, 5]] },
+            "CellSize": { "UDim2": [[0, 70], [0, 70]] },
+            "HorizontalAlignment": "Center",
+            "SortOrder": "Name"
+          }
+        },
+        {
+          "Name": "UIPadding",
+          "ClassName": "UIPadding",
+          "Properties": {
+            "PaddingBottom": { "UDim": [0, 8] },
+            "PaddingLeft": { "UDim": [0, 8] },
+            "PaddingRight": { "UDim": [0, 8] },
+            "PaddingTop": { "UDim": [0, 8] }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "SearchBox",
+      "ClassName": "TextBox",
+      "Properties": {
+        "AnchorPoint": [0.5, 0],
+        "BackgroundColor3": [1, 1, 1],
+        "BackgroundTransparency": 0.5,
+        "BorderSizePixel": 1,
+        "PlaceholderText": "SEARCH",
+        "PlaceholderColor3": [1, 1, 1],
+        "Position": { "UDim2": [[0.809525073, 0], [0.0185442436, 0]] },
+        "Size": { "UDim2": [[0.362759829, 0], [0.0489281639, 20]] },
+        "Text": "",
+        "TextColor3": [0, 0, 0],
+        "TextScaled": true,
+        "TextSize": 14,
+        "ZIndex": 1
+      },
+      "Children": [
+        {
+          "Name": "UICorner",
+          "ClassName": "UICorner",
+          "Properties": {
+            "CornerRadius": { "UDim": [0, 6] }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "UICorner",
+      "ClassName": "UICorner",
+      "Properties": {
+        "CornerRadius": { "UDim": [0, 8] }
+      }
+    }
+  ]
+}

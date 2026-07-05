@@ -6,6 +6,7 @@ realm = "shared"
 
 [dependencies]
 Knit = "sleitnick/knit@1.7.0"
+TopbarPlus = "1foreverhd/topbarplus@3.4.0"
 
 [server-dependencies]
 

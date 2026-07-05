@@ -1,0 +1,10 @@
+Rojo server listening:
+  Address: [0m[1m[32mlocalhost
+[0m  Port:    [0m[1m[32m34872
+
+[0mVisit [0m[1m[32mhttp://localhost:34872/[0m in your browser for more information.
+[ERROR librojo::change_processor] Rojo project referred to a file using $path that could not be turned into a Roblox Instance by Rojo.
+        Check that the file exists and is a file type known by Rojo.
+        
+        Project path: C:/Code/MY_PROJECT/PROJECT_GAME/Animate/default.project.json
+        File $path: world/Baseplate.model.json

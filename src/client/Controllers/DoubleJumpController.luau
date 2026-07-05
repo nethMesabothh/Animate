@@ -6,9 +6,9 @@ local Packages = ReplicatedStorage.Packages
 local Knit = require(Packages.Knit)
 
 local Shared = ReplicatedStorage.Shared
-local CharacterStyleCatalog = require(Shared.CharacterStyleCatalog)
+local RunConfig = require(Shared.RunConfig)
 
-local StyleChanged = ReplicatedStorage.StyleChanged
+local MovementLocked = ReplicatedStorage.MovementLocked
 
 local DoubleJumpController = Knit.CreateController({
 	Name = "DoubleJumpController",
@@ -17,7 +17,6 @@ local DoubleJumpController = Knit.CreateController({
 local player = Players.LocalPlayer
 local humanoid: Humanoid? = nil
 local animator: Animator? = nil
-local jumpTrack: AnimationTrack? = nil
 local doubleJumpTrack: AnimationTrack? = nil
 
 -- Only true once we've confirmed (after a short delay) that the first jump has settled into a
@@ -29,49 +28,49 @@ local doubleJumpArmed = false
 -- below, so that branch doesn't clobber the double-jump animation with the single-jump one.
 local isPerformingDoubleJump = false
 
--- Matches RunConfig's default style (Ninja) until a class platform fires StyleChanged.
-local currentStyle = CharacterStyleCatalog.Ninja
+-- Fired by AnimationController while an Anchor = true emote (like Meditate) is active, so
+-- pressing jump doesn't play a jump pose over top of the emote while the character is held in place.
+local isMovementLocked = false
 
-local function loadTrack(animationId: string, animationName: string): AnimationTrack
+local function loadTrack(entry: typeof(RunConfig.DoubleJump), animationName: string): AnimationTrack
 	local animation = Instance.new("Animation")
 	animation.Name = animationName
-	animation.AnimationId = animationId
+	animation.AnimationId = entry.Id
 
 	local track = animator:LoadAnimation(animation)
 	-- Above walk/run (Action) so the jump pose reads clearly even if a move key is still held mid-air.
 	track.Priority = Enum.AnimationPriority.Action2
-	track.Looped = false
+	track.Looped = entry.Looped
 	return track
-end
-
-local function loadJumpTracks()
-	if jumpTrack then
-		jumpTrack:Stop()
-		jumpTrack:Destroy()
-	end
-	if doubleJumpTrack then
-		doubleJumpTrack:Stop()
-		doubleJumpTrack:Destroy()
-	end
-
-	jumpTrack = loadTrack(currentStyle.JumpAnimationId, "JumpAnimation")
-	doubleJumpTrack = loadTrack(currentStyle.DoubleJumpAnimationId, "DoubleJumpAnimation")
 end
 
 local function onCharacterAdded(character: Model)
 	humanoid = character:WaitForChild("Humanoid") :: Humanoid
 	animator = humanoid:WaitForChild("Animator") :: Animator
 	doubleJumpArmed = false
-	loadJumpTracks()
+
+	if doubleJumpTrack then
+		doubleJumpTrack:Stop()
+		doubleJumpTrack:Destroy()
+	end
+
+	doubleJumpTrack = loadTrack(RunConfig.DoubleJump, "DoubleJumpAnimation")
 
 	humanoid.StateChanged:Connect(function(_old, new)
+		if isMovementLocked then
+			return
+		end
+
+		-- The first jump uses Roblox's own default jump animation (no override) -- only the
+		-- double jump needs a custom pose, since that's not a stock Humanoid ability.
 		if new == Enum.HumanoidStateType.Jumping then
-			if not isPerformingDoubleJump and jumpTrack then
-				jumpTrack:Play()
-			end
+			local wasDoubleJump = isPerformingDoubleJump
 			isPerformingDoubleJump = false
 
-			if not doubleJumpArmed then
+			-- Only the natural first jump (from the ground) should ever arm the double jump --
+			-- our own ChangeState(Jumping) retrigger for the double jump itself also lands in this
+			-- branch, and must NOT re-arm another one, or jumping becomes unlimited.
+			if not wasDoubleJump and not doubleJumpArmed then
 				task.wait(0.2)
 				if humanoid:GetState() == Enum.HumanoidStateType.Freefall then
 					doubleJumpArmed = true
@@ -80,10 +79,7 @@ local function onCharacterAdded(character: Model)
 		elseif new == Enum.HumanoidStateType.Landed or new == Enum.HumanoidStateType.Running then
 			doubleJumpArmed = false
 			-- Non-looped tracks hold their last frame forever once finished instead of releasing
-			-- on their own, so both jump poses must be stopped explicitly once we're grounded again.
-			if jumpTrack then
-				jumpTrack:Stop()
-			end
+			-- on their own, so the double jump pose must be stopped explicitly once we're grounded.
 			if doubleJumpTrack then
 				doubleJumpTrack:Stop()
 			end
@@ -96,7 +92,7 @@ local function onInputBegan(input: InputObject, gameProcessedEvent: boolean)
 		return
 	end
 
-	if not humanoid or not doubleJumpArmed then
+	if isMovementLocked or not humanoid or not doubleJumpArmed then
 		return
 	end
 
@@ -119,10 +115,12 @@ function DoubleJumpController:KnitStart()
 
 	UserInputService.InputBegan:Connect(onInputBegan)
 
-	StyleChanged.Event:Connect(function(_styleName: string, style: typeof(currentStyle))
-		currentStyle = style
-		if animator then
-			loadJumpTracks()
+	MovementLocked.Event:Connect(function(locked: boolean)
+		isMovementLocked = locked
+		if locked then
+			if doubleJumpTrack then
+				doubleJumpTrack:Stop()
+			end
 		end
 	end)
 end

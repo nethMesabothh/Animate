@@ -1,0 +1,41 @@
+{
+  "ClassName": "ImageButton",
+  "Properties": {
+    "Name": "openButton",
+    "AnchorPoint": [0.5, 1],
+    "AutoButtonColor": true,
+    "BackgroundTransparency": 1,
+    "BorderSizePixel": 0,
+    "Position": { "UDim2": [[0.5, 0], [0.92, -20]] },
+    "Size": { "UDim2": [[0.3, 0], [0.0431305729, 0]] },
+    "ZIndex": 6
+  },
+  "Children": [
+    {
+      "Name": "info",
+      "ClassName": "TextLabel",
+      "Properties": {
+        "AnchorPoint": [0.5, 0.5],
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "Position": { "UDim2": [[0.498, 0], [0.5, 0]] },
+        "Size": { "UDim2": [[1, 0], [0.709448814, 0]] },
+        "Text": "(') open inventory",
+        "TextColor3": [1, 1, 1],
+        "TextScaled": true,
+        "TextSize": 14,
+        "ZIndex": 6
+      },
+      "Children": [
+        {
+          "Name": "UIStroke",
+          "ClassName": "UIStroke",
+          "Properties": {
+            "Thickness": 1,
+            "Transparency": 0.5
+          }
+        }
+      ]
+    }
+  ]
+}

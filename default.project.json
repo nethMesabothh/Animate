@@ -10,7 +10,10 @@
       "Packages": {
         "$path": "Packages"
       },
-      "StyleChanged": {
+      "EmoteRequested": {
+        "$className": "BindableEvent"
+      },
+      "MovementLocked": {
         "$className": "BindableEvent"
       }
     },
@@ -29,12 +32,15 @@
       }
     },
 
+    "StarterGui": {
+      "CustomInventory": {
+        "$path": "ui/CustomInventory"
+      }
+    },
+
     "Workspace": {
       "$properties": {
         "FilteringEnabled": true
-      },
-      "Baseplate": {
-        "$path": "world/Baseplate.model.json"
       }
     },
     "Lighting": {

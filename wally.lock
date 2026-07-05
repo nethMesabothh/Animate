@@ -3,9 +3,14 @@
 registry = "test"
 
 [[package]]
+name = "1foreverhd/topbarplus"
+version = "3.4.0"
+dependencies = []
+
+[[package]]
 name = "animate/animate"
 version = "0.1.0"
-dependencies = [["Knit", "sleitnick/knit@1.7.0"], ["TestEZ", "roblox/testez@0.4.1"]]
+dependencies = [["Knit", "sleitnick/knit@1.7.0"], ["TopbarPlus", "1foreverhd/topbarplus@3.4.0"], ["TestEZ", "roblox/testez@0.4.1"]]
 
 [[package]]
 name = "evaera/promise"
