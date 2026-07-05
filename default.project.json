@@ -35,6 +35,12 @@
     "StarterGui": {
       "CustomInventory": {
         "$path": "ui/CustomInventory"
+      },
+      "TopBar": {
+        "$path": "ui/TopBar"
+      },
+      "DeathScreen": {
+        "$path": "ui/DeathScreen"
       }
     },
 

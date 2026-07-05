@@ -129,16 +129,22 @@ local function onShoot(Player: Player, LookDirection: Vector3)
 		local Model = Part:FindFirstAncestorOfClass("Model")
 		local Humanoid = Model and Model:FindFirstChildOfClass("Humanoid")
 
-		Hit = true
-
-		if Humanoid and Model ~= Character then
-			local Sound = ArrowHitSound:Clone()
-
-			Sound.Parent = Model.PrimaryPart
-
-			Sound:Remove()
-			Humanoid:TakeDamage(Settings.Damage)
+		if not Humanoid or Model == Character then
+			Hit = true
+			Time:Destroy()
+			Arrow:Destroy()
+			return
 		end
+
+		Hit = true
+		Model:SetAttribute("LastAttackerUserId", Player.UserId)
+
+		local Sound = ArrowHitSound:Clone()
+
+		Sound.Parent = Model.PrimaryPart
+
+		Sound:Remove()
+		Humanoid:TakeDamage(Settings.Damage, Arrow, nil, Character)
 
 		Time:Destroy()
 		Arrow:Destroy()

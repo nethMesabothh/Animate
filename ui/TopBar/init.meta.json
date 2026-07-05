@@ -1,0 +1,12 @@
+{
+  "className": "ScreenGui",
+  "properties": {
+    "Name": "TopBar",
+    "Enabled": true,
+    "DisplayOrder": 10,
+    "ResetOnSpawn": false,
+    "IgnoreGuiInset": true,
+    "ZIndexBehavior": "Sibling",
+    "ScreenInsets": "DeviceSafeInsets"
+  }
+}

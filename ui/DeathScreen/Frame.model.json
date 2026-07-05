@@ -1,0 +1,96 @@
+{
+  "ClassName": "Frame",
+  "Properties": {
+    "Name": "Frame",
+    "BackgroundColor3": [1, 1, 1],
+    "BorderSizePixel": 1,
+    "BorderColor3": [0.105882, 0.164706, 0.207843],
+    "Size": { "UDim2": [[1, 0], [1, 0]] },
+    "Visible": false
+  },
+  "Children": [
+    {
+      "Name": "ImageLabel",
+      "ClassName": "ImageLabel",
+      "Properties": {
+        "BackgroundColor3": [1, 1, 1],
+        "Image": "rbxassetid://11475237538",
+        "ImageColor3": [0.572549, 0.572549, 0.572549],
+        "Position": { "UDim2": [[-0.445068151, 0], [-0.435483873, 0]] },
+        "ScaleType": "Stretch",
+        "Size": { "UDim2": [[1, 0], [1, 0]] }
+      },
+      "Children": [
+        {
+          "Name": "ImageLabel",
+          "ClassName": "ImageLabel",
+          "Properties": {
+            "BackgroundTransparency": 1,
+            "Image": "rbxassetid://11475392683",
+            "Position": { "UDim2": [[0.426877469, 0], [0.148093849, 0]] },
+            "ScaleType": "Stretch",
+            "Size": { "UDim2": [[0, 184], [0, 196]] }
+          }
+        },
+        {
+          "Name": "TitleText",
+          "ClassName": "TextLabel",
+          "Properties": {
+            "BackgroundTransparency": 1,
+            "FontFace": {
+              "family": "rbxasset://fonts/families/FredokaOne.json",
+              "weight": "Regular",
+              "style": "Normal"
+            },
+            "Position": { "UDim2": [[0.420450717, 0], [0.472991168, 0]] },
+            "Size": { "UDim2": [[0, 200], [0, 50]] },
+            "Text": "YOU DIED",
+            "TextColor3": [1, 1, 1],
+            "TextSize": 60,
+            "TextXAlignment": "Center",
+            "TextYAlignment": "Center"
+          }
+        },
+        {
+          "Name": "QuoteText",
+          "ClassName": "TextLabel",
+          "Properties": {
+            "BackgroundTransparency": 1,
+            "FontFace": {
+              "family": "rbxasset://fonts/families/FredokaOne.json",
+              "weight": "Regular",
+              "style": "Normal"
+            },
+            "Position": { "UDim2": [[0.420450717, 0], [0.568299055, 0]] },
+            "Size": { "UDim2": [[0, 200], [0, 50]] },
+            "Text": "\"Many of life's failures are people who did not realize how close they were to success when they gave up.\"",
+            "TextColor3": [1, 1, 1],
+            "TextSize": 20,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "TextYAlignment": "Center"
+          }
+        },
+        {
+          "Name": "TimerText",
+          "ClassName": "TextLabel",
+          "Properties": {
+            "BackgroundTransparency": 1,
+            "FontFace": {
+              "family": "rbxasset://fonts/families/FredokaOne.json",
+              "weight": "Regular",
+              "style": "Normal"
+            },
+            "Position": { "UDim2": [[0.420450717, 0], [0.641612887, 0]] },
+            "Size": { "UDim2": [[0, 200], [0, 50]] },
+            "Text": "Respawning in 3",
+            "TextColor3": [1, 1, 1],
+            "TextSize": 20,
+            "TextXAlignment": "Center",
+            "TextYAlignment": "Center"
+          }
+        }
+      ]
+    }
+  ]
+}

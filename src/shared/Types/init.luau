@@ -1,5 +1,5 @@
 export type PlayerData = {
-	Coins: number,
+	Cash: number,
 }
 
 return {}

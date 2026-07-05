@@ -1,0 +1,12 @@
+{
+  "className": "ScreenGui",
+  "properties": {
+    "Name": "DeathScreen",
+    "Enabled": true,
+    "DisplayOrder": 100,
+    "ResetOnSpawn": false,
+    "IgnoreGuiInset": true,
+    "ZIndexBehavior": "Sibling",
+    "ScreenInsets": "DeviceSafeInsets"
+  }
+}

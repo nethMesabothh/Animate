@@ -1,0 +1,105 @@
+{
+  "ClassName": "Frame",
+  "Properties": {
+    "Name": "CashDisplay",
+    "AnchorPoint": [0.5, 0.5],
+    "BackgroundColor3": [1, 1, 1],
+    "BackgroundTransparency": 0,
+    "BorderSizePixel": 0,
+    "Position": { "UDim2": [[0.499361575, 0], [0.0562175065, 0]] },
+    "Size": { "UDim2": [[0.153254196, 0], [0.0547839701, 0]] }
+  },
+  "Children": [
+    {
+      "Name": "UICorner",
+      "ClassName": "UICorner",
+      "Properties": {
+        "CornerRadius": { "UDim": [0, 30] }
+      }
+    },
+    {
+      "Name": "UIStroke",
+      "ClassName": "UIStroke",
+      "Properties": {
+        "Color": [0, 0, 0],
+        "Thickness": 2,
+        "ApplyStrokeMode": "Border"
+      }
+    },
+    {
+      "Name": "UIGradient",
+      "ClassName": "UIGradient",
+      "Properties": {
+        "Rotation": 90,
+        "Color": {
+          "ColorSequence": {
+            "keypoints": [
+              { "time": 0, "color": [0.87451, 0.87451, 0.87451] },
+              { "time": 0.5, "color": [0.50196, 0.933333, 0.933333] },
+              { "time": 1, "color": [0.917647, 0.917647, 0.917647] }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "Name": "ImageLabel",
+      "ClassName": "ImageLabel",
+      "Properties": {
+        "AnchorPoint": [0.5, 0.5],
+        "BackgroundTransparency": 1,
+        "Image": "rbxassetid://102643030748094",
+        "Position": { "UDim2": [[0.0964851305, 0], [0.466385275, 0]] },
+        "ScaleType": "Fit",
+        "Size": { "UDim2": [[0.469502479, 0], [1.71303761, 0]] }
+      }
+    },
+    {
+      "Name": "TextLabel",
+      "ClassName": "TextLabel",
+      "Properties": {
+        "AnchorPoint": [0.5, 0.5],
+        "BackgroundTransparency": 1,
+        "FontFace": {
+          "family": "rbxasset://fonts/families/FredokaOne.json",
+          "weight": "Regular",
+          "style": "Normal"
+        },
+        "Position": { "UDim2": [[0.582168162, 0], [0.5, 0]] },
+        "Size": { "UDim2": [[0.678574979, 0], [1.00000012, 0]] },
+        "Text": "0",
+        "TextColor3": [1, 1, 1],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "TextYAlignment": "Center"
+      },
+      "Children": [
+        {
+          "Name": "UIScale",
+          "ClassName": "UIScale",
+          "Properties": {
+            "Scale": 1
+          }
+        },
+        {
+          "Name": "UIStroke",
+          "ClassName": "UIStroke",
+          "Properties": {
+            "Color": [0, 0, 0],
+            "Thickness": 1.5,
+            "Transparency": 0.2
+          }
+        },
+        {
+          "Name": "UITextSizeConstraint",
+          "ClassName": "UITextSizeConstraint",
+          "Properties": {
+            "MaxTextSize": 40,
+            "MinTextSize": 8
+          }
+        }
+      ]
+    }
+  ]
+}

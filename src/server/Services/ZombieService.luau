@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local CollectionService = game:GetService("CollectionService")
@@ -12,11 +13,32 @@ local DestroyService = require(script.Parent.Parent.ZombieAI.DestroyService)
 local ZOMBIE_TAG = "Zombie"
 local SPAWN_CFRAME = CFrame.new(-10, 3, 10)
 local ARMS_LOOP_INTERVAL = 2
+local LAST_ATTACKER_ATTRIBUTE = "LastAttackerUserId"
 
 local ZombieService = Knit.CreateService({
 	Name = "ZombieService",
 	Client = {},
 })
+
+local currencyService: any = nil
+
+local function getKillRewardPlayer(zombie: Model): Player?
+	local killerUserId = zombie:GetAttribute(LAST_ATTACKER_ATTRIBUTE)
+	if typeof(killerUserId) == "number" then
+		local player = Players:GetPlayerByUserId(killerUserId)
+		if player then
+			return player
+		end
+	end
+
+	local humanoid = zombie:FindFirstChildOfClass("Humanoid")
+	local creator = humanoid and humanoid:FindFirstChild("creator")
+	if creator and creator:IsA("ObjectValue") and creator.Value and creator.Value:IsA("Player") then
+		return creator.Value
+	end
+
+	return nil
+end
 
 local function playArmsLoop(zombie: Model): ()
 	task.spawn(function()
@@ -61,6 +83,12 @@ local function spawnZombie(cframe: CFrame): Model
 
 	zombie.Humanoid.Died:Connect(function()
 		ai.Stop()
+
+		local killer = getKillRewardPlayer(zombie)
+		if killer and currencyService then
+			currencyService:AwardZombieKill(killer)
+		end
+
 		queueCorpseCleanup(zombie)
 	end)
 
@@ -68,6 +96,7 @@ local function spawnZombie(cframe: CFrame): Model
 end
 
 function ZombieService:KnitStart()
+	currencyService = Knit.GetService("CurrencyService")
 	spawnZombie(SPAWN_CFRAME)
 end
 
