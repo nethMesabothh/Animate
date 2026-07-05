@@ -22,6 +22,8 @@ RunConfig.RunKey = Enum.KeyCode.LeftShift -- The key to press to run
 RunConfig.TransitionSpeed = 0.5 -- Time it takes to go from walking to running
 RunConfig.SprintTransitionSpeed = 3 -- Time it takes before you start sprinting
 
+RunConfig.JumpCooldown = 1 -- Seconds between ground jumps (see DoubleJumpController)
+
 -- Same { Id, Looped } shape as AnimationCatalog.Emotes -- swap Id here to replace any of these
 -- animations later, exactly like swapping Meditate's.
 --

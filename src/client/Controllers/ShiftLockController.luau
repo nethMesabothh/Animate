@@ -19,15 +19,22 @@ local Player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 local humanoid: Humanoid? = nil
 local rootPart: BasePart? = nil
-local locked = false
+local applied = false
+local forced = false
 
-local function setLocked(isLocked: boolean): ()
-	if isLocked == locked then
+local lockOnController: any = nil
+
+local function setApplied(isApplied: boolean): ()
+	if isApplied == applied then
 		return
 	end
-	locked = isLocked
+	applied = isApplied
 
-	if isLocked then
+	if not humanoid then
+		return
+	end
+
+	if isApplied then
 		CursorOverride.Push()
 		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
 		humanoid.AutoRotate = false
@@ -40,26 +47,44 @@ local function setLocked(isLocked: boolean): ()
 	end
 end
 
+local function applyState(): ()
+	local lockOnActive = lockOnController and lockOnController:IsLocked()
+	setApplied(forced and not lockOnActive)
+end
+
 local function onCharacterAdded(character: Model)
 	humanoid = character:WaitForChild("Humanoid") :: Humanoid
 	rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
-	locked = false
+	applied = false
+	applyState()
 end
 
 -- Shift lock is entirely driven by the bow's equip state -- no manual toggle. Equipping the bow
 -- always locks the camera; dropping/unequipping it always frees it, no exceptions.
 function ShiftLockController:SetForced(isForced: boolean): ()
-	setLocked(isForced)
+	forced = isForced
+	applyState()
+end
+
+-- Re-applies shift lock after lock-on releases camera control (e.g. bow still equipped).
+function ShiftLockController:Refresh(): ()
+	applyState()
 end
 
 function ShiftLockController:KnitStart()
+	lockOnController = Knit.GetController("LockOnController")
+
 	if Player.Character then
 		onCharacterAdded(Player.Character)
 	end
 	Player.CharacterAdded:Connect(onCharacterAdded)
 
 	RunService.RenderStepped:Connect(function()
-		if not locked or not rootPart then
+		if not applied or not rootPart then
+			return
+		end
+
+		if lockOnController and lockOnController:IsLocked() then
 			return
 		end
 

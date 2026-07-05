@@ -55,6 +55,16 @@ local Humanoid: Humanoid? = nil
 local Sounds: { [string]: Sound } = nil
 local Tracks: { [string]: AnimationTrack } = nil
 local Equipped = false
+local lockOnController: any = nil
+
+local function getShootDirection(): Vector3
+	local aimDirection = lockOnController and lockOnController:GetAimDirection()
+	if aimDirection then
+		return aimDirection
+	end
+
+	return Camera.CFrame.LookVector
+end
 
 local function LoadAnimation(animation: Animation): AnimationTrack
 	local animator = Humanoid:FindFirstChildOfClass("Animator") :: Animator
@@ -74,6 +84,10 @@ local function setAiming(isAiming: boolean): ()
 end
 
 local function TweenFOV(TargetFOV: number): ()
+	if lockOnController and lockOnController:IsLocked() then
+		return
+	end
+
 	if State.CurrentFOVTween then
 		State.CurrentFOVTween:Cancel()
 	end
@@ -108,7 +122,7 @@ local function StopAim(Fired: boolean): ()
 	if Fired then
 		Sounds.Release:Play()
 		Tracks.Shot:Play()
-		Packets.Shoot:Fire(Camera.CFrame.LookVector)
+		Packets.Shoot:Fire(getShootDirection())
 	else
 		Sounds.Cancel:Play()
 	end
@@ -146,7 +160,7 @@ local function StartFastAim(): ()
 		Sounds.Release:Play()
 
 		Flash:Play(Player.Character)
-		Packets.Shoot:Fire(Camera.CFrame.LookVector)
+		Packets.Shoot:Fire(getShootDirection())
 
 		State.FastAiming = false
 		Humanoid.WalkSpeed = State.OriginalWalkSpeed
@@ -237,6 +251,10 @@ local function onEquipStateChanged(isEquipped: boolean): ()
 		if State.FastAiming then
 			StopFastAim()
 		end
+
+		if lockOnController then
+			lockOnController:Unlock()
+		end
 	end
 
 	Knit.GetController("ShiftLockController"):SetForced(isEquipped)
@@ -279,6 +297,8 @@ local function onInputEnded(input: InputObject)
 end
 
 function BowController:KnitStart()
+	lockOnController = Knit.GetController("LockOnController")
+
 	Sounds = {
 		Cancel = SoundService:WaitForChild("Cancel") :: Sound,
 		Hold = SoundService:WaitForChild("Bow Hold") :: Sound,

@@ -33,25 +33,61 @@ local BowService = Knit.CreateService({
 	Client = {},
 })
 
--- Each player who owns a bow gets one persistent Tool instance (so it shows up in the
--- CustomInventory hotbar/backpack UI) that toggles between Character (equipped, welded to Left
--- Arm) and Backpack (stowed via the inventory UI) -- there's no world-drop, equip/unequip only.
-local playerTools: { [Player]: Tool } = {}
+-- Workspace.Debris isn't Rojo-tracked, so it doesn't exist unless something creates it -- create
+-- it here rather than depending on it already being present in the Studio place file.
+local DebrisFolder = Workspace:FindFirstChild("Debris")
+if not DebrisFolder then
+	DebrisFolder = Instance.new("Folder")
+	DebrisFolder.Name = "Debris"
+	DebrisFolder.Parent = Workspace
+end
+
+-- Ownership of the bow is tracked as a flag rather than a persisted Tool instance -- the actual
+-- Tool is recovered from Player.Backpack on respawn (see onCharacterAdded), falling back to
+-- building a fresh one via createBowTool() only if no surviving instance is found there.
+local ownsBow: { [Player]: boolean } = {}
 local worldPickup: Model? = nil
+
+local function addTrail(Arrow: BasePart): ()
+	local Tip = Instance.new("Attachment")
+	Tip.Name = "TrailTip"
+	Tip.Position = Vector3.new(0, Arrow.Size.Y / 2, 0)
+	Tip.Parent = Arrow
+
+	local Tail = Instance.new("Attachment")
+	Tail.Name = "TrailTail"
+	Tail.Position = Vector3.new(0, -Arrow.Size.Y / 2, 0)
+	Tail.Parent = Arrow
+
+	local Trail = Instance.new("Trail")
+	Trail.Attachment0 = Tip
+	Trail.Attachment1 = Tail
+	Trail.Lifetime = 0.3
+	Trail.MinLength = 0
+	Trail.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+	Trail.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.2),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	Trail.WidthScale = NumberSequence.new(1, 0)
+	Trail.Parent = Arrow
+end
 
 local function CreateArrow()
 	local Arrow = Models.Arrow:Clone()
 
-	Arrow.Parent = Workspace.Debris
+	Arrow.Parent = DebrisFolder
 	Arrow.Anchored = true
 	Arrow.CanCollide = false
+
+	addTrail(Arrow)
 
 	return Arrow
 end
 
 local function isEquipped(Player: Player): boolean
-	local tool = playerTools[Player]
-	return tool ~= nil and tool.Parent == Player.Character
+	local character = Player.Character
+	return character ~= nil and character:FindFirstChild("Bow") ~= nil
 end
 
 local function onShoot(Player: Player, LookDirection: Vector3)
@@ -229,7 +265,7 @@ local function createWorldPickup(): ()
 	prompt.Parent = RootPart
 
 	prompt.Triggered:Connect(function(Player: Player)
-		if playerTools[Player] then
+		if ownsBow[Player] then
 			return
 		end
 
@@ -246,9 +282,8 @@ local function createWorldPickup(): ()
 		Bow:Destroy()
 		worldPickup = nil
 
-		local tool = createBowTool(Player)
-		playerTools[Player] = tool
-		Humanoid:EquipTool(tool)
+		ownsBow[Player] = true
+		Humanoid:EquipTool(createBowTool(Player))
 	end)
 
 	Bow.Parent = Workspace
@@ -258,16 +293,21 @@ end
 local function onCharacterAdded(Player: Player, Character: Model): ()
 	local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
 	if Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
-		-- RigTypeService swaps this character out for a fresh R6 model right after spawn,
-		-- which fires CharacterAdded again -- skip the transient R15 character to avoid
-		-- indexing "Left Arm", which only exists on R6.
+		-- RigTypeService swaps this character out for a fresh R6 model via a direct Character
+		-- property assignment, which does refire CharacterAdded -- skip this transient R15
+		-- character (indexing "Left Arm" etc. would fail on it) and let that second firing,
+		-- with the real R6 character, run the re-equip logic below.
 		return
 	end
 
-	-- Re-equip automatically across respawns for players who already own the bow.
-	local tool = playerTools[Player]
-	if tool then
-		Humanoid:EquipTool(tool)
+	-- Re-equip automatically across respawns for players who already own the bow. Roblox
+	-- auto-unequips a dying Humanoid's Tool into Player.Backpack (Backpack outlives Character, so
+	-- this survives the swap fully intact) -- reuse that instance instead of building a new one,
+	-- which would otherwise leave two separate Bow tools (and two hotbar entries) behind.
+	if ownsBow[Player] then
+		local backpack = Player:FindFirstChildOfClass("Backpack")
+		local existingTool = backpack and backpack:FindFirstChild("Bow")
+		Humanoid:EquipTool(existingTool or createBowTool(Player))
 	end
 end
 
@@ -281,11 +321,7 @@ function BowService:KnitStart()
 	end)
 
 	Players.PlayerRemoving:Connect(function(Player: Player)
-		local tool = playerTools[Player]
-		if tool then
-			tool:Destroy()
-		end
-		playerTools[Player] = nil
+		ownsBow[Player] = nil
 	end)
 
 	createWorldPickup()

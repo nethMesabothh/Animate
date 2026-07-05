@@ -32,6 +32,10 @@ local isPerformingDoubleJump = false
 -- pressing jump doesn't play a jump pose over top of the emote while the character is held in place.
 local isMovementLocked = false
 
+-- Cooldown between ground jumps only -- doesn't affect the double jump's own trigger, which is
+-- gated separately by doubleJumpArmed.
+local jumpOnCooldown = false
+
 local function loadTrack(entry: typeof(RunConfig.DoubleJump), animationName: string): AnimationTrack
 	local animation = Instance.new("Animation")
 	animation.Name = animationName
@@ -48,6 +52,7 @@ local function onCharacterAdded(character: Model)
 	humanoid = character:WaitForChild("Humanoid") :: Humanoid
 	animator = humanoid:WaitForChild("Animator") :: Animator
 	doubleJumpArmed = false
+	jumpOnCooldown = false
 
 	if doubleJumpTrack then
 		doubleJumpTrack:Stop()
@@ -87,6 +92,27 @@ local function onCharacterAdded(character: Model)
 	end)
 end
 
+local function onJumpRequest(): ()
+	if isMovementLocked or not humanoid then
+		return
+	end
+
+	if humanoid.FloorMaterial == Enum.Material.Air then
+		-- Already airborne -- this is the double jump's territory, not the ground-jump cooldown's.
+		return
+	end
+
+	if jumpOnCooldown then
+		return
+	end
+
+	jumpOnCooldown = true
+	humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+	task.delay(RunConfig.JumpCooldown, function()
+		jumpOnCooldown = false
+	end)
+end
+
 local function onInputBegan(input: InputObject, gameProcessedEvent: boolean)
 	if gameProcessedEvent or input.KeyCode ~= Enum.KeyCode.Space then
 		return
@@ -114,6 +140,7 @@ function DoubleJumpController:KnitStart()
 	player.CharacterAdded:Connect(onCharacterAdded)
 
 	UserInputService.InputBegan:Connect(onInputBegan)
+	UserInputService.JumpRequest:Connect(onJumpRequest)
 
 	MovementLocked.Event:Connect(function(locked: boolean)
 		isMovementLocked = locked
