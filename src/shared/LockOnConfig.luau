@@ -1,8 +1,9 @@
 local LockOnConfig = {}
 
 -- Input
+-- Q is reserved for dash (see RunConfig.DashKey / DashController) and always dashes, even while
+-- locked on -- target-switching is mouse-only now.
 LockOnConfig.LockKey = Enum.KeyCode.E
-LockOnConfig.SwitchTargetKey = Enum.KeyCode.Q
 LockOnConfig.SwitchTargetMouse = Enum.UserInputType.MouseButton3
 
 -- Targeting

@@ -564,9 +564,7 @@ local function setupInput(): ()
 		end
 
 		if locked then
-			if input.KeyCode == LockOnConfig.SwitchTargetKey
-				or input.UserInputType == LockOnConfig.SwitchTargetMouse
-			then
+			if input.UserInputType == LockOnConfig.SwitchTargetMouse then
 				switchTarget(1)
 			end
 		end

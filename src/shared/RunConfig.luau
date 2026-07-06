@@ -24,6 +24,11 @@ RunConfig.SprintTransitionSpeed = 3 -- Time it takes before you start sprinting
 
 RunConfig.JumpCooldown = 1 -- Seconds between ground jumps (see DoubleJumpController)
 
+RunConfig.DashKey = Enum.KeyCode.Q -- Always dashes, even while locked on (see DashController)
+RunConfig.DashSpeed = 75 -- Studs/sec applied for the dash's duration
+RunConfig.DashDuration = 0.2 -- How long the dash velocity is sustained
+RunConfig.DashCooldown = 1.2 -- Seconds before another dash can be triggered
+
 -- Same { Id, Looped } shape as AnimationCatalog.Emotes -- swap Id here to replace any of these
 -- animations later, exactly like swapping Meditate's.
 --
