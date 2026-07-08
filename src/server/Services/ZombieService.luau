@@ -9,9 +9,12 @@ local Knit = require(Packages.Knit)
 
 local ZombieAI = require(script.Parent.Parent.ZombieAI)
 local DestroyService = require(script.Parent.Parent.ZombieAI.DestroyService)
+local findSpawnCFrame = require(script.Parent.Parent.FindSpawnCFrame)
 
 local ZOMBIE_TAG = "Zombie"
-local SPAWN_CFRAME = CFrame.new(-10, 3, 10)
+-- Offset from the map's actual spawn point (see FindSpawnCFrame), not an absolute world position
+-- -- keeps the zombie reachable regardless of which place/map this code is synced into.
+local SPAWN_OFFSET = CFrame.new(-15, 3, 10)
 local ARMS_LOOP_INTERVAL = 2
 local LAST_ATTACKER_ATTRIBUTE = "LastAttackerUserId"
 
@@ -97,7 +100,7 @@ end
 
 function ZombieService:KnitStart()
 	currencyService = Knit.GetService("CurrencyService")
-	spawnZombie(SPAWN_CFRAME)
+	spawnZombie(findSpawnCFrame() * SPAWN_OFFSET)
 end
 
 function ZombieService:KnitInit() end

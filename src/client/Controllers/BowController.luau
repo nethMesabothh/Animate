@@ -67,7 +67,9 @@ local function getShootDirection(): Vector3
 end
 
 local function LoadAnimation(animation: Animation): AnimationTrack
-	local animator = Humanoid:FindFirstChildOfClass("Animator") :: Animator
+	-- FindFirstChildOfClass would race the Animator not existing yet right after a fresh
+	-- Humanoid is created (RigTypeService's R6 swap in particular) -- WaitForChild avoids that.
+	local animator = Humanoid:WaitForChild("Animator") :: Animator
 	return animator:LoadAnimation(animation)
 end
 

@@ -42,9 +42,9 @@ local function loadTrack(entry: typeof(RunConfig.BowWalk), animationName: string
 	return track
 end
 
--- Idle/Walk/Run are only ever loaded while the bow is equipped -- unequipped, none of them exist
--- at all, so Roblox's own default Animate script drives walk/run/idle exactly like a fresh
--- character (matching the request to keep stock Roblox animations when not holding the bow).
+-- Idle/Walk/Run always play the Bow* poses while the bow is equipped, and the Default* poses
+-- (from the MovementSystem kit) otherwise -- replacing Roblox's own default Animate script rather
+-- than leaving it in control.
 local function reloadMovementTracks(): ()
 	-- AnimationTrack:Destroy() doesn't reliably stop a track that's actively playing -- without
 	-- an explicit Stop() first, the animation can keep looping on the Animator even after the
@@ -66,14 +66,13 @@ local function reloadMovementTracks(): ()
 		runTrack = nil
 	end
 
-	if bowEquipped then
-		walkEntry = RunConfig.BowWalk
-		walkTrack = loadTrack(RunConfig.BowWalk, "WalkAnimation")
-		runTrack = loadTrack(RunConfig.BowRun, "RunAnimation")
-		idleTrack = loadTrack(RunConfig.BowIdle, "IdleAnimation")
-	else
-		walkEntry = nil
-	end
+	local idleEntry = bowEquipped and RunConfig.BowIdle or RunConfig.DefaultIdle
+	local runEntry = bowEquipped and RunConfig.BowRun or RunConfig.DefaultRun
+	walkEntry = bowEquipped and RunConfig.BowWalk or RunConfig.DefaultWalk
+
+	walkTrack = loadTrack(walkEntry, "WalkAnimation")
+	runTrack = loadTrack(runEntry, "RunAnimation")
+	idleTrack = loadTrack(idleEntry, "IdleAnimation")
 
 	-- Fully reset movement state on any equip change so switching mid-run/mid-sprint doesn't
 	-- leave a stale Running/Sprinting flag, WalkSpeed, or camera FOV behind from the animation
@@ -232,8 +231,9 @@ local function onInputEnded(input: InputObject)
 end
 
 function MovementController:KnitStart()
-	mobileGui = player:WaitForChild("PlayerGui"):WaitForChild("MobileGui") :: ScreenGui
-
+	-- Character/camera setup and core input must not depend on an optional GUI existing --
+	-- WaitForChild with no timeout below would otherwise hang this whole function (and with it,
+	-- camera-follow and movement input) forever if MobileGui is ever missing from StarterGui.
 	if player.Character then
 		onCharacterAdded(player.Character)
 	end
@@ -243,11 +243,16 @@ function MovementController:KnitStart()
 	UserInputService.InputEnded:Connect(onInputEnded)
 	Packets.EquipState.OnClientEvent:Connect(onEquipStateChanged)
 
-	mobileGui.RunButton.MouseButton1Down:Connect(Run)
-	mobileGui.RunButton.MouseButton1Up:Connect(Walk)
+	mobileGui = player:WaitForChild("PlayerGui"):WaitForChild("MobileGui", 5) :: ScreenGui?
+	if mobileGui then
+		mobileGui.RunButton.MouseButton1Down:Connect(Run)
+		mobileGui.RunButton.MouseButton1Up:Connect(Walk)
 
-	if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled then
-		mobileGui.Enabled = true
+		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled then
+			mobileGui.Enabled = true
+		end
+	else
+		warn("MovementController: StarterGui.MobileGui not found -- mobile run button will be unavailable")
 	end
 
 	RunService.RenderStepped:Connect(function()
@@ -262,9 +267,7 @@ function MovementController:KnitStart()
 			end
 
 			-- Explicitly override the core walk/run blend so normal walking always reads as a
-			-- clean walk gait instead of whatever mix the default Animate script picks -- only
-			-- while the bow is equipped; unequipped, walkTrack is nil and Roblox's default
-			-- Animate script handles it on its own.
+			-- clean walk gait instead of whatever mix Roblox's default Animate script would pick.
 			if walkTrack and not RunConfig.Running and not walkTrack.IsPlaying then
 				walkTrack:Play()
 				walkTrack:AdjustSpeed(walkEntry and walkEntry.Speed or 1)

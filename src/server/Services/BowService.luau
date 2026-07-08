@@ -11,6 +11,8 @@ local Knit = require(Packages.Knit)
 local Shared = ReplicatedStorage.Shared
 local Packets = require(Shared.Packets)
 
+local findSpawnCFrame = require(script.Parent.Parent.FindSpawnCFrame)
+
 local Assets = ReplicatedStorage.Assets
 local Models = Assets.Models
 
@@ -26,7 +28,9 @@ local Settings = {
 	Damage = 15,
 }
 
-local PICKUP_CFRAME = CFrame.new(5, 2, 0)
+-- Offset from the map's actual spawn point (see FindSpawnCFrame), not an absolute world position
+-- -- keeps the pickup reachable regardless of which place/map this code is synced into.
+local PICKUP_OFFSET = CFrame.new(5, 2, 0)
 
 local BowService = Knit.CreateService({
 	Name = "BowService",
@@ -257,7 +261,7 @@ local function createWorldPickup(): ()
 
 	local Bow = Models.Bow:Clone()
 	Bow.Name = "BowPickup"
-	Bow:PivotTo(PICKUP_CFRAME)
+	Bow:PivotTo(findSpawnCFrame() * PICKUP_OFFSET)
 
 	local RootPart = Bow.RootPart :: BasePart
 	RootPart.Anchored = true

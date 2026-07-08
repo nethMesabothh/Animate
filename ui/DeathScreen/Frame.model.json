@@ -2,9 +2,9 @@
   "ClassName": "Frame",
   "Properties": {
     "Name": "Frame",
-    "BackgroundColor3": [1, 1, 1],
-    "BorderSizePixel": 1,
-    "BorderColor3": [0.105882, 0.164706, 0.207843],
+    "BackgroundColor3": [0, 0, 0],
+    "BackgroundTransparency": 0.45,
+    "BorderSizePixel": 0,
     "Size": { "UDim2": [[1, 0], [1, 0]] },
     "Visible": false
   },
@@ -16,7 +16,7 @@
         "BackgroundColor3": [1, 1, 1],
         "Image": "rbxassetid://11475237538",
         "ImageColor3": [0.572549, 0.572549, 0.572549],
-        "Position": { "UDim2": [[-0.445068151, 0], [-0.435483873, 0]] },
+        "Position": { "UDim2": [[0, 0], [0, 0]] },
         "ScaleType": "Stretch",
         "Size": { "UDim2": [[1, 0], [1, 0]] }
       },
